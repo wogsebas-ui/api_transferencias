@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from models import Transferencia
+from database import guardar_transferencia, obtener_transferencias, obtener_transferencia, actualizar_transferencia
 
 app = FastAPI()
 
@@ -9,10 +10,30 @@ def inicio():
 
 transferencias = []
 @app.get("/api/transferencias")
-def listar_trasnferencias():
-        return transferencias
+def listar_transferencias():
+        return obtener_transferencias()
+
+@app.get("/api/transferencias/{id_pago}")
+def buscar_transferencia(id_pago: str):
+         transferencia = obtener_transferencia(id_pago)
+         if transferencia is None:
+            raise HTTPException(status_code=404, detail="Transferencia no encontrada")
+         return transferencia
+
+     
+     
+    
 
 @app.post("/api/transferencias")
 def crear_transferencia(transferencia: Transferencia):
-    transferencias.append(transferencia)
+    guardar_transferencia(transferencia)
+    return transferencia
+
+
+@app.put("/api/transferencias/{id_pago}")
+def actulizar(id_pago: str, transferencia: Transferencia):
+    filas_actualizadas = actualizar_transferencia(id_pago, transferencia)
+
+    if filas_actualizadas == 0:
+         raise HTTPException(status_code=404, detail="Transferencia no encontrada")
     return transferencia
