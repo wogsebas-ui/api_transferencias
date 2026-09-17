@@ -105,3 +105,19 @@ def actualizar_transferencia(id_pago, transferencia):
     conexion.close()
 
     return filas_actualizadas
+
+def inhabilitar_transferencia(id_pago):
+    conexion = sqlite3.connect("transferencias.db")
+    cursor = conexion.cursor()
+
+    cursor.execute("""
+        UPDATE transferencias
+        SET estado = ?
+        WHERE id_pago = ?
+    """, ("Inactiva", id_pago))
+
+    conexion.commit()
+    filas_actualizadas = cursor.rowcount
+    conexion.close()
+
+    return filas_actualizadas

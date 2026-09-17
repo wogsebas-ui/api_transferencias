@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from models import Transferencia
-from database import guardar_transferencia, obtener_transferencias, obtener_transferencia, actualizar_transferencia
+from database import guardar_transferencia, obtener_transferencias, obtener_transferencia, actualizar_transferencia, inhabilitar_transferencia
 
 app = FastAPI()
 
@@ -37,3 +37,14 @@ def actulizar(id_pago: str, transferencia: Transferencia):
     if filas_actualizadas == 0:
          raise HTTPException(status_code=404, detail="Transferencia no encontrada")
     return transferencia
+
+@app.delete("/api/transferencias/{id_pago}")
+def eliminar_transferencia(id_pago: str):
+    filas_actualizadas = inhabilitar_transferencia(id_pago)
+
+    if filas_actualizadas == 0:
+        raise HTTPException(status_code=404, detail="Transferencia no encontrada")
+    return {"mensaje": "Transferencia inhabilitada correctamente",
+            "id_pago": id_pago,
+            "estado": "inactiva"
+    }
