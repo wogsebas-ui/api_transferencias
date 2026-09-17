@@ -24,7 +24,7 @@ def buscar_transferencia(id_pago: str):
      
     
 
-@app.post("/api/transferencias")
+@app.post("/api/transferencias", status_code=201)
 def crear_transferencia(transferencia: Transferencia):
     guardar_transferencia(transferencia)
     return transferencia
